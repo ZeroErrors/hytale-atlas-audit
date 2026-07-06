@@ -9,7 +9,7 @@
     <version>${revision}</version>
 
     <properties>
-        <plugin.version>1.0.0</plugin.version>
+        <plugin.version>1.1.0</plugin.version>
         <revision>${plugin.version}-SNAPSHOT+${hytale.server.version}</revision>
         <hytale.server.version>0.6.0-pre.6</hytale.server.version>
         <maven.compiler.source>25</maven.compiler.source>

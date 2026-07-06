@@ -1,5 +1,7 @@
 package dev.zero.atlasaudit;
 
+import com.hypixel.hytale.common.semver.Semver;
+import com.hypixel.hytale.common.util.java.ManifestUtil;
 import com.hypixel.hytale.server.core.asset.common.CommonAsset;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetRegistry;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
@@ -25,6 +27,10 @@ final class AtlasAudit {
     private static final int HIGH_END_LIMIT = 16384;
     private static final int TOP_TEXTURES = 10;
 
+    private static final int ITEM_ICON_ATLAS_WIDTH = 8192;
+    private static final int ITEM_ICON_ATLAS_WIDTH_LEGACY = 2048;
+    private static final String ITEM_ICON_ATLAS_WIDE_SINCE = "0.6.0-pre.7";
+
     private static final String[] CHARACTER_ROOTS = {
         "Characters/", "NPC/", "NPCs/", "Items/", "Consumable/", "Resources/", "VFX/", "Trailer/"
     };
@@ -44,7 +50,7 @@ final class AtlasAudit {
 
         var entity = new Atlas("Model/Entity", 8192, 256, 16, false, 0, Dedupe.HASH, false);
         var blocks = new Atlas("Blocks", 8192, 512, 16, true, 0, Dedupe.HASH, true);
-        var itemIcons = new Atlas("Item Icons", 2048, 64, 0, false, 64, Dedupe.NAME, false);
+        var itemIcons = new Atlas("Item Icons", itemIconAtlasWidth(), 64, 0, false, 64, Dedupe.NAME, false);
         var fx = new Atlas("FX/Particles", 8192, 512, 1, false, 0, Dedupe.HASH, true);
         var customUi = new Atlas("Custom UI", 8192, 256, 1, false, 0, Dedupe.LOGICAL_2X, false);
         var worldMap = new Atlas("World Map", 2048, 256, 1, false, 0, Dedupe.NAME, false);
@@ -70,6 +76,18 @@ final class AtlasAudit {
             atlases.add(atlas.result());
         }
         return new Report(atlases);
+    }
+
+    private static int itemIconAtlasWidth() {
+        try {
+            var version = ManifestUtil.getVersion();
+            if (version != null
+                && Semver.fromString(version).compareTo(Semver.fromString(ITEM_ICON_ATLAS_WIDE_SINCE)) >= 0) {
+                return ITEM_ICON_ATLAS_WIDTH;
+            }
+        } catch (Exception | LinkageError ignored) {
+        }
+        return ITEM_ICON_ATLAS_WIDTH_LEGACY;
     }
 
     @Nullable
