@@ -1,0 +1,39 @@
+name: Compatibility Check
+
+on:
+  schedule:
+    # Thursday 21:00 UTC, a few hours after the ~14:00 UTC pre-release drop
+    - cron: '0 21 * * 4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-against-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Resolve latest pre-release server version
+        id: server
+        run: |
+          LATEST=$(curl -sf --retry 3 --retry-delay 5 \
+            "https://maven.hytale.com/pre-release/com/hypixel/hytale/Server/maven-metadata.xml" \
+            | grep -oP '(?<=<release>)[^<]+')
+          if [ -z "$LATEST" ]; then
+            echo "Could not resolve latest pre-release server version"
+            exit 1
+          fi
+          echo "version=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "Latest pre-release server version: $LATEST"
+
+      - name: Build against ${{ steps.server.outputs.version }}
+        env:
+          SERVER_VERSION: ${{ steps.server.outputs.version }}
+        run: ./mvnw -B verify "-Dhytale.server.version=$SERVER_VERSION"

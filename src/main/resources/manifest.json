@@ -1,0 +1,12 @@
+{
+    "Group": "dev.zero",
+    "Name": "AtlasAudit",
+    "Version": "${project.version}",
+    "Description": "Reports the predicted size of each client texture atlas built from the loaded mods, to diagnose oversized-atlas black textures",
+    "Authors": [{ "Name": "ZeroErrors" }],
+    "Website": "https://zero.dev",
+    "ServerVersion": "*",
+    "DisabledByDefault": false,
+    "IncludesAssetPack": false,
+    "Main": "dev.zero.atlasaudit.AtlasAuditPlugin"
+}

@@ -1,0 +1,17 @@
+# Build
+target/
+.flattened-pom.xml
+
+# IDE
+*.iml
+.idea/*
+!.idea/runConfigurations/
+.classpath
+.project
+.settings/
+
+# Maven wrapper JAR (auto-downloaded on first run)
+.mvn/wrapper/maven-wrapper.jar
+
+# Runtime
+run/
